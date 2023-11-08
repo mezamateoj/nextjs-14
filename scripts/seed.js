@@ -64,15 +64,24 @@ async function seedInvoices() {
     console.log(`Created "invoices" table`);
 
     // Insert data into the "invoices" table
-    const insertedInvoices = await Promise.all(
-      invoices.map(
-        (invoice) => sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
-        ON CONFLICT (id) DO NOTHING;
-      `,
-      ),
-    );
+    // Insert data into the "invoices" table
+    const insertedInvoices = [];
+    for (const invoice of invoices) {
+      insertedInvoices.push(await sql`
+    INSERT INTO invoices (customer_id, amount, status, date)
+    VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
+    ON CONFLICT (id) DO NOTHING;
+  `);
+    }
+    // const insertedInvoices = await Promise.all(
+    //   invoices.map(
+    //     (invoice) => sql`
+    //     INSERT INTO invoices (customer_id, amount, status, date)
+    //     VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
+    //     ON CONFLICT (id) DO NOTHING;
+    //   `,
+    //   ),
+    // );
 
     console.log(`Seeded ${insertedInvoices.length} invoices`);
 
@@ -138,15 +147,24 @@ async function seedRevenue() {
     console.log(`Created "revenue" table`);
 
     // Insert data into the "revenue" table
-    const insertedRevenue = await Promise.all(
-      revenue.map(
-        (rev) => sql`
-        INSERT INTO revenue (month, revenue)
-        VALUES (${rev.month}, ${rev.revenue})
-        ON CONFLICT (month) DO NOTHING;
-      `,
-      ),
-    );
+    const insertedRevenue = [];
+    for (const rev of revenue) {
+      insertedRevenue.push(await sql`
+      INSERT INTO revenue (month, revenue)
+      VALUES (${rev.month}, ${rev.revenue})
+      ON CONFLICT (month) DO NOTHING;
+    `);
+    }
+
+    // const insertedRevenue = await Promise.all(
+    //   revenue.map(
+    //     (rev) => sql`
+    //     INSERT INTO revenue (month, revenue)
+    //     VALUES (${rev.month}, ${rev.revenue})
+    //     ON CONFLICT (month) DO NOTHING;
+    //   `,
+    //   ),
+    // );
 
     console.log(`Seeded ${insertedRevenue.length} revenue`);
 
